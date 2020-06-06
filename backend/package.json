@@ -1,0 +1,17 @@
+{
+  "name": "arbatron-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "ccxt": "^1.29.10",
+    "colors": "^1.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Ender Piyale",
+  "license": "Apache-2.0"
+}

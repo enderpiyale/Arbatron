@@ -1,0 +1,45 @@
+@startuml "Class Diagram"
+
+class User {
+    + username: String
+    -- encrypted --
+    + password: 
+    -- methods --
+    + addExchangeApi()
+}
+
+class Exchange {
+    + name: String
+    + api: [exchangeID, privApi]
+    + markets: [] 
+    
+    'markets':         { ... }          // dictionary of markets/pairs by symbol
+    'symbols':         [ ... ]          // sorted list of string symbols (traded pairs)
+    'currencies':      { ... }          // dictionary of currencies by currency code
+    'markets_by_id':   { ... },         // dictionary of dictionaries (markets) by id
+    'apiKey':   '92560ffae9b8a0421...', // string public apiKey (ASCII, hex, Base64, ...)
+    'secret':   '9aHjPmW+EtRRKN/Oi...'  // string private secret key
+    'password': '6kszf4aci8r',          // string password
+    'uid':      '123456',               // string user id
+    
+    -- methods --
+    + fetchDepositAddress(): String
+    + deposit()
+
+    + cancelOrder()
+    + createOrder()
+
+    + fetchMarkets()
+    + fetchBalance()
+    + fetchMyOrders()
+    + fetchOrderBook()
+    + fetchBidsAsks()
+
+class Trade {
+    + pair: String 
+    -- methods --
+    + getExchanges(): [ ]
+}
+
+
+@enduml
