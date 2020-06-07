@@ -2,44 +2,76 @@
 
 class User {
     + username: String
+    + transactions: []
+    + trades: []
     -- encrypted --
     + password: 
     -- methods --
-    + addExchangeApi()
+    + addPrivApi(exchangeName, privApi, secretKey)
+    + printTxHistory()
+    + printTradeHistory()
 }
 
 class Exchange {
     + name: String
-    + api: [exchangeID, privApi]
-    + markets: [] 
-    
-    'markets':         { ... }          // dictionary of markets/pairs by symbol
-    'symbols':         [ ... ]          // sorted list of string symbols (traded pairs)
-    'currencies':      { ... }          // dictionary of currencies by currency code
-    'markets_by_id':   { ... },         // dictionary of dictionaries (markets) by id
-    'apiKey':   '92560ffae9b8a0421...', // string public apiKey (ASCII, hex, Base64, ...)
-    'secret':   '9aHjPmW+EtRRKN/Oi...'  // string private secret key
-    'password': '6kszf4aci8r',          // string password
-    'uid':      '123456',               // string user id
-    
+    -- encrypted --
+    + privApi: String
+    + secretKey: String
+
+    -- arrays --
+    + markets: []
+    + currencies: [] 
+
     -- methods --
-    + fetchDepositAddress(): String
-    + deposit()
-
-    + cancelOrder()
-    + createOrder()
-
-    + fetchMarkets()
-    + fetchBalance()
-    + fetchMyOrders()
-    + fetchOrderBook()
-    + fetchBidsAsks()
+    + getDepositAddress(currency): String
+    + deposit(currency, destiationAddress, amount):
+    + fetchMarkets(): []
+    + fetchBalance(): Float
+}
 
 class Trade {
     + pair: String 
+
     -- methods --
-    + getExchanges(): [ ]
+    + getAvailableExchanges(): [ ]
+    
+    -- methods --
+    + limitBuyOrder(exchangeName, pair, price):
+    + limitSellOrder(exchangeName, pair, price):
+    + marketBuyOrder(exchangeName, pair):
+    + marketSellOrder(exchangeName, pair):
+    + cancelOrder(exchangeName, pair, orderId):
+    + getMyOrders(exchangeName):
+    + getBidsAsks(exchangeName, pair):
+    + getTradingFee(exchangeName, pair):
 }
 
+class Transaction {
+    + timestamp:
+    + datetime: Date
+    + sourceExchange: String
+    + destinationExchange: String
+    + sourceWallet: String
+    + destinationWallet: String
+    + currency: String 
+    + amount: Float
+    + transactionFee: Float
+    + status: 
+    + fee: Float
+}
+
+class Currency {
+    code: String
+    name: String
+    fee: Float
+}
+
+User "1" *-- "m" Transaction
+User "n" o-- "m" Exchange
+Trade "n" --> "m" Currency
+Transaction "n" --> "1" Currency
+Exchange "m" -- "n" Trade
+Exchange "1" -- "m" Transaction
+Exchange "n" o-- "m" Currency
 
 @enduml
