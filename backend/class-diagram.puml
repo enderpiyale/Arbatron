@@ -1,6 +1,6 @@
 @startuml "Class Diagram"
 
-class User {
+class User <<Entitiy>> {
     + username: String
     + transactions: []
     + trades: []
@@ -53,7 +53,7 @@ class Transaction {
     + destinationExchange: String
     + sourceWallet: String
     + destinationWallet: String
-    + currency: String 
+    + currency: Currency
     + amount: Float
     + transactionFee: Float
     + status: 
