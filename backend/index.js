@@ -164,10 +164,8 @@ binance.generateWallet(ETH)
 kucoin.generateWallet(BTC)
 kucoin.generateWallet(ETH)
 
-// console.log(binance)
-// console.log(binance.currencies)
-
 ender.createTransaction(binance, kucoin, BTC, 100)
+ender.createTransaction(kucoin, binance, ETH, 200)
 
 console.log(ender.transactions)
 
