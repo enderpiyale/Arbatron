@@ -65,23 +65,18 @@ class Exchange {
     }
     addMarket(market){
         this.markets.push(market)
-        // if(this.currencies.indexOf(market.quote) === -1) {
-        //     this.currencies.push(market.quote);
-        // }
-        // if (this.currencies.indexOf(market.base) === -1) {
-        //     this.currencies.push(market.base);
-        // }
     }
 
     addCurrency(currency){
         this.currencies.push(currency)
     }
 
-    generateWallet(Currency){
+    generateWallet(currency){
         const exchangeWallet = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-        Currency.wallets.push({name: this.name, wallet: exchangeWallet})
+        currency.wallets.push({exchangeName: this.name, wallet: exchangeWallet})
         
     }
+        
 }
 
 class User {
@@ -97,6 +92,11 @@ class User {
         this.apis.push(api)
         exchange.users.push(this)
     }
+    createTransaction(sourceExchange, destinationExchange, currency, amount){
+        const tx = new Transaction(this, sourceExchange, destinationExchange, currency, amount)
+        this.transactions.push(tx)
+    }
+    
 }
 
 class Api {
@@ -124,18 +124,22 @@ class Market {
     }
 }
 
-// class Transaction {
-//     constructor(sourceExchange, destinationExchange, amount){
-//         this.timestamp = Date.now()
-//         // this.sourceExchange = sourceExchange
-//         // this.destinationExchange = destinationExchange
-//         // this.sourceWallet = sourceExchange.wallet.currency
-//         // this.destinationWallet = destinationExchange.wallet.currency
-//         // this.amount = amount
-//     }
-// }
+class Transaction {
+    constructor(user, sourceExchange, destinationExchange, currency, amount){
+        this.timestamp = Date.now()
+        this.user = user.name
+        this.sourceExchange = sourceExchange.name
+        this.destinationExchange = destinationExchange.name
+        this.sourceWallet = Object.values(currency.wallets[0])[1]
+        this.destinationWallet = Object.values(currency.wallets[1])[1]
+        this.currency = currency.name
+        this.amount = amount
+        this.status = ''
+    }
+}
 
 const binance = new Exchange('binance')
+const kucoin = new Exchange('kucoin')
 const ender = new User('ender')
 
 ender.registerToExchange(binance, process.env.BINANCE_API_KEY, process.env.BINANCE_SECRET_KEY)
@@ -150,12 +154,22 @@ const BTCUSDT = new Market(BTC, USDT)
 const ETHUSDT = new Market(ETH, USDT)
 binance.addCurrency(BTC)
 binance.addCurrency(ETH)
+kucoin.addCurrency(BTC)
+kucoin.addCurrency(ETH)
 
 binance.addMarket(BTCUSDT)
 binance.addMarket(ETHUSDT)
 
 binance.generateWallet(BTC)
 binance.generateWallet(ETH)
+kucoin.generateWallet(BTC)
+kucoin.generateWallet(ETH)
 
-console.log(binance)
-console.log(JSON.stringify(binance.currencies))
+// console.log(binance)
+// console.log(binance.currencies)
+
+ender.createTransaction(binance, kucoin, BTC, 100)
+
+console.log(ender.transactions)
+
+// console.log(BTC)
