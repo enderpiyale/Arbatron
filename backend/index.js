@@ -74,7 +74,6 @@ class Exchange {
     generateWallet(currency){
         const exchangeWallet = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
         currency.wallets.push({exchangeName: this.name, wallet: exchangeWallet})
-        
     }
         
 }
@@ -130,8 +129,8 @@ class Transaction {
         this.user = user.name
         this.sourceExchange = sourceExchange.name
         this.destinationExchange = destinationExchange.name
-        this.sourceWallet = Object.values(currency.wallets[0])[1]
-        this.destinationWallet = Object.values(currency.wallets[1])[1]
+        this.sourceWallet = currency.wallets.find(record => record['exchangeName'] == sourceExchange.name).wallet
+        this.destinationWallet = currency.wallets.find(record => record['exchangeName'] == destinationExchange.name).wallet
         this.currency = currency.name
         this.amount = amount
         this.status = ''
@@ -172,4 +171,3 @@ ender.createTransaction(binance, kucoin, BTC, 100)
 
 console.log(ender.transactions)
 
-// console.log(BTC)
