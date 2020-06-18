@@ -1,4 +1,4 @@
-require('dotenv').config();
+
 // const ccxt = require('ccxt');
 
 // (async function () {
@@ -56,86 +56,10 @@ require('dotenv').config();
 // const api = process.env.BINANCE_API_KEY
 // console.log(api)
 
-class Exchange {
-    constructor (name){
-        this.name = name
-        this.users = []
-        this.markets = []
-        this.currencies = []
-    }
-    addMarket(market){
-        this.markets.push(market)
-    }
-
-    addCurrency(currency){
-        this.currencies.push(currency)
-    }
-
-    generateWallet(currency){
-        const exchangeWallet = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-        currency.wallets.push({exchangeName: this.name, wallet: exchangeWallet})
-    }
-        
-}
-
-class User {
-    constructor(name, password = ''){
-        this.name = name
-        this.password = password
-        this.transactions = []
-        this.trades = []
-        this.apis = []
-    }
-    registerToExchange(exchange, privKey, secretKey){
-        const api = new Api(this, exchange, privKey, secretKey)
-        this.apis.push(api)
-        exchange.users.push(this)
-    }
-    createTransaction(sourceExchange, destinationExchange, currency, amount){
-        const tx = new Transaction(this, sourceExchange, destinationExchange, currency, amount)
-        this.transactions.push(tx)
-    }
-    
-}
-
-class Api {
-    constructor(user, exchange, privKey, secretKey){
-        this.user = user
-        this.exchange = exchange
-        this.privKey = privKey
-        this.secretKey = secretKey
-    }
-}
-
-class Currency {
-    constructor(name){
-        this.name = name
-        this.wallets = []
-    }
-
-}
-
-class Market {
-    constructor(baseCurrency, quoteCurrency){
-        this.symbol = baseCurrency.name + '/' + quoteCurrency.name
-        this.base = baseCurrency.name
-        this.quote = quoteCurrency.name
-    }
-}
-
-class Transaction {
-    constructor(user, sourceExchange, destinationExchange, currency, amount){
-        this.timestamp = Date.now()
-        this.user = user.name
-        this.sourceExchange = sourceExchange.name
-        this.destinationExchange = destinationExchange.name
-        this.sourceWallet = currency.wallets.find(record => record['exchangeName'] == sourceExchange.name).wallet
-        this.destinationWallet = currency.wallets.find(record => record['exchangeName'] == destinationExchange.name).wallet
-        this.currency = currency.name
-        this.amount = amount
-        this.status = ''
-    }
-}
+const Exchange = require('./exchange')
+const User = require('./user')
+const Currency = require('./currency')
+const Market = require('./market')
 
 const binance = new Exchange('binance')
 const kucoin = new Exchange('kucoin')
@@ -151,6 +75,7 @@ const USDT = new Currency('USDT')
 //Market Definitions
 const BTCUSDT = new Market(BTC, USDT)
 const ETHUSDT = new Market(ETH, USDT)
+
 binance.addCurrency(BTC)
 binance.addCurrency(ETH)
 kucoin.addCurrency(BTC)
@@ -163,9 +88,18 @@ binance.generateWallet(BTC)
 binance.generateWallet(ETH)
 kucoin.generateWallet(BTC)
 kucoin.generateWallet(ETH)
+binance.generateWallet(USDT)
+kucoin.generateWallet(USDT)
 
-ender.createTransaction(binance, kucoin, BTC, 100)
-ender.createTransaction(kucoin, binance, ETH, 200)
+const TX1 = ender.createTransaction(binance, kucoin, BTC, 100)
+const TX2 = ender.createTransaction(kucoin, binance, ETH, 200)
+const TX3 = ender.createTransaction(binance, kucoin, USDT, 500)
 
-console.log(ender.transactions)
+// console.log(ender.transactions)
+// console.log(BTC.wallets)
 
+TX1.printTransaction()
+TX2.printTransaction()
+TX3.printTransaction()
+
+ender.printTransactionHistory()
