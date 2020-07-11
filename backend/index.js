@@ -1,105 +1,32 @@
+'use strict';
+console.time()
+const ccxt = require('ccxt');
+const user = require('./user');
+const arbdata = require('./arbdata')
 
-// const ccxt = require('ccxt');
+user.exchanges = [ccxt.binance, ccxt.huobipro, ccxt.bittrex, ccxt.kucoin]
+const market = 'ETH/BTC'
 
-// (async function () {
-//     const huobipro  = new ccxt.huobipro ()
-//     const binance = new ccxt.binance ()
-//     const idex = new ccxt.idex ()
-//     const kucoin = new ccxt.kucoin ()
- 
-//     await huobipro.loadMarkets ()
-//     await binance.loadMarkets ()
-//     await idex.loadMarkets  ()
-//     await kucoin.loadMarkets () 
- 
-//     //console.log (huobipro.id,    await huobipro.fetchOrderBook (huobipro.symbols[0]))
-//     //console.log (idex.id,  await idex.fetchTicker ('SNTVT/ETH'))
-//     //console.log (huobipro.id,  await huobipro.fetchTrades ('BTC/USDT'))
- 
-// }) ();
+async function userExchangesloadMarkets(market) {
+    try{
+        user.exchanges.forEach(async marketitem => {
+            const exchangeItem = new marketitem ({ enableRateLimit: true })
+            await exchangeItem.loadMarkets()
+            const orderbook = await exchangeItem.fetchOrderBook(market)
+            console.log (new Date(), exchangeItem.name, 'BUY:', orderbook.asks[0][0], 'SELL:', orderbook.bids[0][0])
+        })
+    }
+    catch (error){
+        if (error instanceof ccxt.NetworkError) {
+            console.log (exchangeItem.id, 'fetchTicker failed due to a network error:', error.message)
+        } else if (error instanceof ccxt.ExchangeError) {
+            console.log (exchangeItem.id, 'fetchTicker failed due to exchange error:', error.message)
+        } else {
+            console.log (exchangeItem.id, 'fetchTicker failed with:', error.message)
+        } 
+    } 
+}
 
-// const ccxt = require ('ccxt')
-//     , log = require ('ololog')
-//     , asTable = require ('as-table')
+userExchangesloadMarkets(market)
+console.timeEnd()
 
-// ;(async function main () {
-
-//     let kraken = new ccxt.kraken ({ enableRateLimit: true })
-//     await kraken.loadMarkets ()
-
-//     const markets = Object.values (kraken.markets).map (market => ({
-//         symbol: market.symbol,
-//         active: market.active,
-//         taker: market.taker,
-//         maker: market.maker,
-//         percentage: market.percentage
-//     }))
-
-//     log.bright.green.noLocate ('Markets:')
-//     log.green.noLocate (asTable (markets), '\n')
-
-//     const currencies = Object.values (kraken.currencies).map (currency => ({
-//         code: currency.code,
-//         active: currency.active,
-//         status: currency.status,
-//         fee: currency.fee
-//     }))
-
-//     log.bright.yellow.noLocate ('Currencies:')
-//     log.yellow.noLocate (asTable (currencies))
-
-//     let symbols = kraken.symbols
-//     console.log(symbols)
-
-// }) ()
-
-// const api = process.env.BINANCE_API_KEY
-// console.log(api)
-
-const Exchange = require('./exchange')
-const User = require('./user')
-const Currency = require('./currency')
-const Market = require('./market')
-
-const binance = new Exchange('binance')
-const kucoin = new Exchange('kucoin')
-const ender = new User('ender')
-
-ender.registerToExchange(binance, process.env.BINANCE_API_KEY, process.env.BINANCE_SECRET_KEY)
-
-//Currency Definitions
-const BTC = new Currency('BTC')
-const ETH = new Currency('ETH')
-const USDT = new Currency('USDT')
-
-//Market Definitions
-const BTCUSDT = new Market(BTC, USDT)
-const ETHUSDT = new Market(ETH, USDT)
-
-binance.addCurrency(BTC)
-binance.addCurrency(ETH)
-kucoin.addCurrency(BTC)
-kucoin.addCurrency(ETH)
-
-binance.addMarket(BTCUSDT)
-binance.addMarket(ETHUSDT)
-
-binance.generateWallet(BTC)
-binance.generateWallet(ETH)
-kucoin.generateWallet(BTC)
-kucoin.generateWallet(ETH)
-binance.generateWallet(USDT)
-kucoin.generateWallet(USDT)
-
-const TX1 = ender.createTransaction(binance, kucoin, BTC, 100)
-const TX2 = ender.createTransaction(kucoin, binance, ETH, 200)
-const TX3 = ender.createTransaction(binance, kucoin, USDT, 500)
-
-// console.log(ender.transactions)
-// console.log(BTC.wallets)
-
-TX1.printTransaction()
-TX2.printTransaction()
-TX3.printTransaction()
-
-ender.printTransactionHistory()

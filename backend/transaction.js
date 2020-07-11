@@ -11,9 +11,6 @@ class Transaction {
         this.status = ''
     }
     
-    printTransaction(){
-        console.log(`${this.user} transfered ${this.amount} ${this.currency} from ${this.sourceExchange} wallet ${this.sourceWallet} to ${this.destinationExchange} wallet ${this.destinationWallet}`)
-    }
 }
 
 

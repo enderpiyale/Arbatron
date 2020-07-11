@@ -1,4 +1,5 @@
 require('dotenv').config();
+const ccxt = require('ccxt');
 const Api = require('./api')
 const Transaction = require('./transaction')
 
@@ -6,6 +7,7 @@ class User {
     constructor(name, password = ''){
         this.name = name
         this.password = password
+        this.exchanges = []
         this.transactions = []
         this.trades = []
         this.apis = []
@@ -22,9 +24,12 @@ class User {
     }
 
     printTransactionHistory() {
-        // this.transactions.forEach(tx => console.log(tx))
-        this.transactions.forEach(printTransaction)
+        this.transactions.forEach(this.printTransaction)
     } 
+
+    printTransaction(transaction){
+        console.log(`${transaction.user} transfered ${transaction.amount} ${transaction.currency} from ${transaction.sourceExchange} wallet ${transaction.sourceWallet} to ${transaction.destinationExchange} wallet ${transaction.destinationWallet}`)
+    }
 }
 
 module.exports = User
