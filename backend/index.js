@@ -6,14 +6,14 @@ const arbdata = require('./arbdata')
 
 user.exchanges = [ccxt.binance, ccxt.huobipro, ccxt.bittrex, ccxt.kucoin]
 const market = 'ETH/BTC'
-
+const data = []
 async function userExchangesloadMarkets(market) {
     try{
         user.exchanges.forEach(async marketitem => {
             const exchangeItem = new marketitem ({ enableRateLimit: true })
             await exchangeItem.loadMarkets()
             const orderbook = await exchangeItem.fetchOrderBook(market)
-            console.log (new Date(), exchangeItem.name, 'BUY:', orderbook.asks[0][0], 'SELL:', orderbook.bids[0][0])
+            data.push(new Date(), exchangeItem.name, 'BUY:', orderbook.asks[0][0], 'SELL:', orderbook.bids[0][0])
         })
     }
     catch (error){
@@ -28,5 +28,6 @@ async function userExchangesloadMarkets(market) {
 }
 
 userExchangesloadMarkets(market)
+console.log(data)
 console.timeEnd()
 
